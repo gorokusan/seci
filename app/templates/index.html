@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}SECI Knowledge Mapper - ホーム{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">知識創造プロセスを可視化する</h1>
+        <p class="hero-subtitle">SECIモデルに基づいた、直感的な知識マッピングツール</p>
+        <div class="hero-actions">
+            <a href="/mapper" class="btn btn-primary btn-large">今すぐ始める</a>
+            <a href="/analytics" class="btn btn-secondary btn-large">分析を見る</a>
+        </div>
+    </div>
+</div>
+
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">主要機能</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon" style="background-color: #4A90E2;">S</div>
+                <h3>共同化 (Socialization)</h3>
+                <p>暗黙知の共有と体験を通じた知識の創造</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background-color: #7ED321;">E</div>
+                <h3>表出化 (Externalization)</h3>
+                <p>暗黙知を形式知に変換し、言語化</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background-color: #F5A623;">C</div>
+                <h3>連結化 (Combination)</h3>
+                <p>形式知同士を組み合わせ、新たな知識を創造</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background-color: #BD10E0;">I</div>
+                <h3>内面化 (Internalization)</h3>
+                <p>形式知を暗黙知として体得し、実践</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="benefits-section">
+    <div class="container">
+        <h2 class="section-title">このツールでできること</h2>
+        <div class="benefits-list">
+            <div class="benefit-item">
+                <span class="benefit-icon">🗺️</span>
+                <div class="benefit-content">
+                    <h3>インタラクティブなマッピング</h3>
+                    <p>ドラッグ&ドロップで直感的に知識ノードを配置。D3.jsによる美しい可視化</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">📊</span>
+                <div class="benefit-content">
+                    <h3>詳細な分析とメトリクス</h3>
+                    <p>知識創造プロセスのバランスや完成度を可視化。次のステップを自動提案</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">🔍</span>
+                <div class="benefit-content">
+                    <h3>強力な検索・フィルター</h3>
+                    <p>カテゴリ別フィルターやキーワード検索で、必要な知識にすぐアクセス</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">📤</span>
+                <div class="benefit-content">
+                    <h3>データエクスポート</h3>
+                    <p>JSON・CSV形式でデータをエクスポート。他のツールとの連携も簡単</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">🔒</span>
+                <div class="benefit-content">
+                    <h3>プライバシー保護</h3>
+                    <p>ログイン不要のセッションベース。180日間無操作で自動削除</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">🚀</span>
+                <div class="benefit-content">
+                    <h3>高速・レスポンシブ</h3>
+                    <p>Redisキャッシュによる高速レスポンス。モバイルにも対応</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>知識創造の旅を始めましょう</h2>
+        <p>ログイン不要ですぐに使い始められます</p>
+        <a href="/mapper" class="btn btn-primary btn-large">マッピングを始める →</a>
+    </div>
+</section>
+
+<section class="info-section">
+    <div class="container">
+        <h2 class="section-title">SECIモデルについて</h2>
+        <div class="info-content">
+            <p>
+                SECIモデルは、野中郁次郎氏と竹内弘高氏が提唱した組織的知識創造理論です。
+                知識には「暗黙知」と「形式知」があり、この2つが相互に変換されながら
+                螺旋的に発展していくプロセスを4つのモード（共同化・表出化・連結化・内面化）で説明しています。
+            </p>
+            <div class="seci-cycle">
+                <div class="cycle-step">
+                    <h4>1. 共同化 (Socialization)</h4>
+                    <p>暗黙知 → 暗黙知<br>経験や体験の共有を通じた知識の伝達</p>
+                </div>
+                <div class="cycle-arrow">→</div>
+                <div class="cycle-step">
+                    <h4>2. 表出化 (Externalization)</h4>
+                    <p>暗黙知 → 形式知<br>言語化・図式化による知識の明示化</p>
+                </div>
+                <div class="cycle-arrow">→</div>
+                <div class="cycle-step">
+                    <h4>3. 連結化 (Combination)</h4>
+                    <p>形式知 → 形式知<br>既存の形式知を組み合わせた新知識の創造</p>
+                </div>
+                <div class="cycle-arrow">→</div>
+                <div class="cycle-step">
+                    <h4>4. 内面化 (Internalization)</h4>
+                    <p>形式知 → 暗黙知<br>実践を通じた知識の体得</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

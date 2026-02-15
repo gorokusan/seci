@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block title %}知識マッピング - SECI Knowledge Mapper{% endblock %}
+
+{% block content %}
+<div class="mapper-container">
+    <div class="mapper-sidebar">
+        <div class="sidebar-section">
+            <h2>ツール</h2>
+            <button id="addNodeBtn" class="btn btn-primary btn-full">
+                ➕ ノードを追加
+            </button>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>フィルター</h3>
+            <div class="filter-group">
+                <label>
+                    <input type="checkbox" class="category-filter" value="all" checked>
+                    すべて表示
+                </label>
+                <label style="color: #4A90E2;">
+                    <input type="checkbox" class="category-filter" value="socialization" checked>
+                    共同化
+                </label>
+                <label style="color: #7ED321;">
+                    <input type="checkbox" class="category-filter" value="externalization" checked>
+                    表出化
+                </label>
+                <label style="color: #F5A623;">
+                    <input type="checkbox" class="category-filter" value="combination" checked>
+                    連結化
+                </label>
+                <label style="color: #BD10E0;">
+                    <input type="checkbox" class="category-filter" value="internalization" checked>
+                    内面化
+                </label>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>検索</h3>
+            <input type="text" id="searchInput" class="input-field" placeholder="キーワードで検索...">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+
+	<div class="tags-filter-section">
+    		<h3>タグフィルター</h3>
+    		<div id="tagFilterList" class="tag-filter-list"></div>
+	</div>
+
+        <div class="sidebar-section">
+            <h3>統計</h3>
+            <div class="stats-display">
+                <div class="stat-item">
+                    <span class="stat-label">ノード数</span>
+                    <span class="stat-value" id="nodeCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">接続数</span>
+                    <span class="stat-value" id="connectionCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">完成度</span>
+                    <span class="stat-value" id="completionScore">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>操作</h3>
+            <button id="autoLayoutBtn" class="btn btn-secondary btn-small">
+                🔄 自動配置
+            </button>
+            <button id="exportBtn" class="btn btn-secondary btn-small">
+                📥 エクスポート
+            </button>
+        </div>
+    </div>
+
+    <div class="mapper-main">
+        <div class="mapper-header">
+            <h2>知識マッピング</h2>
+            <div class="mapper-controls">
+                <button id="zoomIn" class="control-btn" title="ズームイン">+</button>
+                <button id="zoomOut" class="control-btn" title="ズームアウト">-</button>
+                <button id="resetView" class="control-btn" title="ビューをリセット">⟲</button>
+            </div>
+        </div>
+        <div id="mapCanvas" class="map-canvas"></div>
+        <div class="progress-bar-container">
+            <div class="progress-label">知識創造プロセスの完成度</div>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ノード追加/編集モーダル -->
+<div id="nodeModal" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+        <h2 id="modalTitle">ノードを追加</h2>
+        <form id="nodeForm">
+            <div class="form-group">
+                <label for="nodeTitle">タイトル *</label>
+                <input type="text" id="nodeTitle" class="input-field" required maxlength="255">
+            </div>
+            
+            <div class="form-group">
+                <label for="nodeCategory">カテゴリ *</label>
+                <select id="nodeCategory" class="select-field" required>
+                    <option value="">選択してください</option>
+                    <option value="socialization">共同化 (Socialization) - 暗黙知の共有</option>
+                    <option value="externalization">表出化 (Externalization) - 暗黙知の形式化</option>
+                    <option value="combination">連結化 (Combination) - 形式知の統合</option>
+                    <option value="internalization">内面化 (Internalization) - 形式知の実践</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="nodeDescription">説明</label>
+                <textarea id="nodeDescription" class="textarea-field" rows="5" placeholder="この知識の詳細な説明..."></textarea>
+            </div>
+
+	    <!-- タグ入力追加 -->
+            <div class="form-group">
+                <label for="nodeTags">タグ</label>
+                <div class="tag-input-container">
+                    <input type="text" id="nodeTagInput" class="input-field" placeholder="#タグを入力してEnter">
+                    <div id="nodeTagsList" class="tags-list">
+                        <!-- 選択されたタグが表示される -->
+                    </div>
+                </div>
+                <div id="tagSuggestions" class="tag-suggestions">
+                    <!-- タグ候補が表示される -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>関連ノード（オプション）</label>
+                <div id="relatedNodes" class="related-nodes-list"></div>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-primary">保存</button>
+                <button type="button" id="modalCancel" class="btn btn-secondary">キャンセル</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ノード詳細モーダル -->
+<div id="nodeDetailModal" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2 id="detailTitle"></h2>
+            <button id="detailClose" class="modal-close">×</button>
+        </div>
+        <div class="modal-body">
+          <!---  <div class="detail-category">
+		  <span class="category-badge" id="detailCategory"></span>
+            </div>
+            <div class="detail-description" id="detailDescription"></div>
+            <div class="detail-meta">
+                <p><strong>作成日時:</strong> <span id="detailCreated"></span></p>
+                <p><strong>更新日時:</strong> <span id="detailUpdated"></span></p>
+            </div>
+	  ---!>
+	    
+	  <!-- カテゴリとタグ -->
+            <div class="detail-category-tags">
+                <span class="category-badge" id="detailCategory"></span>
+                <div id="detailTags" class="detail-tags">
+                    <!-- タグが表示される -->
+                </div>
+            </div>
+
+	    <!-- リアクションボタン -->
+            <div class="reaction-buttons">
+                <button class="reaction-btn" id="likeBtn" data-type="like">
+                    <span class="reaction-icon">👍</span>
+                    <span class="reaction-count" id="likeCount">0</span>
+                </button>
+                <button class="reaction-btn" id="starBtn" data-type="star">
+                    <span class="reaction-icon">⭐</span>
+                    <span class="reaction-count" id="starCount">0</span>
+                </button>
+                <button class="reaction-btn" id="bookmarkBtn" data-type="bookmark">
+                    <span class="reaction-icon">🔖</span>
+                    <span class="reaction-count" id="bookmarkCount">0</span>
+                </button>
+            </div>
+
+	    <!-- 説明 -->
+            <div class="detail-description" id="detailDescription"></div>
+
+            <!-- メタ情報 -->
+            <div class="detail-meta">
+                <p><strong>作成日時:</strong> <span id="detailCreated"></span></p>
+                <p><strong>更新日時:</strong> <span id="detailUpdated"></span></p>
+                <p><strong>バージョン:</strong> <span id="detailVersion">1</span></p>
+            </div>
+
+            <!-- タブナビゲーション -->
+            <div class="detail-tabs">
+                <button class="tab-btn active" data-tab="connections">接続</button>
+                <button class="tab-btn" data-tab="comments">コメント (<span id="commentCount">0</span>)</button>
+                <button class="tab-btn" data-tab="versions">履歴 (<span id="versionCount">0</span>)</button>
+            </div>
+
+            <!-- 接続タブ-->
+            <div id="connectionsTab" class="tab-content active">
+                <h3>接続</h3>
+                <div id="detailConnectionsList"></div>
+            </div>
+
+	    <!-- コメントタブの中身 -->
+	    <div id="commentsTab" class="tab-content">
+  		<div id="commentList"></div>
+
+  		<div class="comment-input-wrapper">
+    			<textarea id="commentInput" rows="3"
+              			placeholder="コメントを入力"></textarea>
+    			<button id="commentSubmitBtn" class="btn btn-primary">
+      			        コメントを追加
+    			</button>
+  		</div>
+
+  		<div class="comment-meta">
+    			コメント数: <span id="commentCountDetail">0</span>
+  		</div>
+	　　</div>
+
+	    <!-- 履歴タブ-->
+	    <div class="tab-content" id="versionsTab">
+                <h3>バージョン履歴</h3>
+                <div id="versionsList" class="versions-list">
+                    <!-- バージョン履歴が表示される -->
+                </div>
+            </div>
+
+	    <!-- ブックマークリスト（サイドバー or 詳細モーダル） -->
+            <div id="bookmarkList" class="bookmark-list">
+  		<!-- まだ何もない時は JS がプレースホルダを入れてくれる -->
+	    </div>
+
+        </div>
+        <div class="modal-actions">
+            <button id="editNodeBtn" class="btn btn-primary">編集</button>
+            <button id="deleteNodeBtn" class="btn btn-danger">削除</button>
+        </div>
+    </div>
+</div>
+
+<!-- エクスポートモーダル -->
+<div id="exportModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h2>データをエクスポート</h2>
+        <div class="export-options">
+            <button class="btn btn-primary export-btn" data-format="json">
+                JSON形式でダウンロード
+            </button>
+            <button class="btn btn-primary export-btn" data-format="csv">
+                CSV形式でダウンロード
+            </button>
+        </div>
+        <div class="modal-actions">
+            <button id="exportCancel" class="btn btn-secondary">キャンセル</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="{{ url_for('static', filename='js/mapper.js') }}"></script>
+<script src="{{ url_for('static', filename='js/export.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tags.js') }}"></script>
+<script src="{{ url_for('static', filename='js/reactions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/comments.js') }}"></script>
+{% endblock %}

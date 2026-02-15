@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- SEO -->
+    <title>{% block title %}SECI Knowledge Mapper - 知識創造プロセスの可視化ツール{% endblock %}</title>
+    <meta name="description" content="{% block description %}SECIモデル（共同化・表出化・連結化・内面化）に基づく知識創造プロセスの可視化・管理ツール。インタラクティブなマッピングと分析機能で、組織の知識創造を支援します。{% endblock %}">
+    <meta name="keywords" content="SECI,知識創造,ナレッジマネジメント,共同化,表出化,連結化,内面化,野中郁次郎,組織学習,知識管理">
+    <meta name="author" content="SECI Mapper">
+    <meta name="robots" content="index, follow">
+    
+    <!-- OGP -->
+    <meta property="og:title" content="{% block og_title %}SECI Knowledge Mapper{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}SECIモデルに基づく知識創造プロセスの可視化ツール{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:site_name" content="SECI Knowledge Mapper">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}SECI Knowledge Mapper{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}SECIモデルに基づく知識創造プロセスの可視化ツール{% endblock %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+    
+    <!-- Stylesheets -->
+
+    <!-- Bootstrap CSS（追加） -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    {% block extra_head %}{% endblock %}
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SECI Knowledge Mapper",
+        "description": "SECIモデルに基づく知識創造プロセスの可視化・管理ツール",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="main-header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/">SECI Knowledge Mapper</a></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">ホーム</a></li>
+                <li><a href="/mapper" class="nav-link">マッピング</a></li>
+                <li><a href="/analytics" class="nav-link">分析</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- フッター -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SECI Knowledge Mapper</h3>
+                <p>知識創造プロセスを可視化し、組織学習を支援するツール</p>
+            </div>
+            <div class="footer-section">
+                <h4>プライバシー</h4>
+                <p>180日間無操作のデータは自動削除されます</p>
+                <p>第三者へのデータ提供は行いません</p>
+            </div>
+            <div class="footer-section">
+                <h4>SECIモデルとは</h4>
+                <p>野中郁次郎氏が提唱した知識創造理論</p>
+                <ul>
+                    <li>共同化 (Socialization)</li>
+                    <li>表出化 (Externalization)</li>
+                    <li>連結化 (Combination)</li>
+                    <li>内面化 (Internalization)</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 SECI Knowledge Mapper. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- 確認ダイアログ -->
+    <div id="privacyDialog" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>プライバシー確認</h2>
+            <p>この内容は第三者に見られても問題ありませんか？</p>
+            <p class="privacy-notice">
+                ⚠️ 個人情報や機密情報は含めないでください<br>
+                💡 180日間無操作のデータは自動削除されます
+            </p>
+            <div class="modal-actions">
+                <button id="privacyConfirm" class="btn btn-primary">確認して保存</button>
+                <button id="privacyCancel" class="btn btn-secondary">キャンセル</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知エリア -->
+    <div id="notification" class="notification" style="display: none;"></div>
+
+    <!-- Base JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+
+    <!-- Bootstrap CSS（追加） -->
+    <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+
+</body>
+</html>

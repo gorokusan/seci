@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}分析ダッシュボード - SECI Knowledge Mapper{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h1>分析ダッシュボード</h1>
+        <button id="refreshAnalytics" class="btn btn-primary">🔄 更新</button>
+    </div>
+
+    <div class="analytics-grid">
+        <!-- サマリーカード -->
+        <div class="analytics-card card-summary">
+            <h2>サマリー</h2>
+            <div class="summary-stats">
+                <div class="summary-item">
+                    <div class="summary-value" id="totalNodes">0</div>
+                    <div class="summary-label">総ノード数</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="totalConnections">0</div>
+                    <div class="summary-label">総接続数</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="completionScore">0%</div>
+                    <div class="summary-label">完成度スコア</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="balanceScore">0%</div>
+                    <div class="summary-label">バランススコア</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- カテゴリ分布 -->
+        <div class="analytics-card card-distribution">
+            <h2>カテゴリ分布</h2>
+            <div id="distributionChart" class="chart-container"></div>
+            <div id="distributionLegend" class="chart-legend"></div>
+        </div>
+
+        <!-- フロー品質 -->
+        <div class="analytics-card card-flow">
+            <h2>フロー品質</h2>
+            <div class="flow-metrics">
+                <div class="metric-item">
+                    <div class="metric-label">品質スコア</div>
+                    <div class="metric-value" id="flowScore">0%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">理想的なフロー</div>
+                    <div class="metric-value">
+                        <span id="idealFlows">0</span> / <span id="totalFlows">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-description">
+                <p>SECIモデルに従った理想的な知識の遷移パターンの割合を示します。</p>
+                <ul class="flow-patterns">
+                    <li><span style="color: #4A90E2;">●</span> 共同化 → 表出化</li>
+                    <li><span style="color: #7ED321;">●</span> 表出化 → 連結化</li>
+                    <li><span style="color: #F5A623;">●</span> 連結化 → 内面化</li>
+                    <li><span style="color: #BD10E0;">●</span> 内面化 → 共同化</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 次のステップの提案 -->
+        <div class="analytics-card card-suggestions">
+            <h2>次のステップ</h2>
+            <div id="suggestionsList" class="suggestions-list">
+                <!-- 動的に生成 -->
+            </div>
+        </div>
+
+        <!-- インサイト -->
+        <div class="analytics-card card-insights">
+            <h2>インサイト</h2>
+            <div id="insightsList" class="insights-list">
+                <!-- 動的に生成 -->
+            </div>
+        </div>
+
+        <!-- プロセス完成度 -->
+        <div class="analytics-card card-completion">
+            <h2>プロセス完成度</h2>
+            <div class="completion-circle">
+                <svg viewBox="0 0 200 200" width="200" height="200">
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                    <circle id="completionCircle" cx="100" cy="100" r="80" fill="none" stroke="#4A90E2" 
+                            stroke-width="20" stroke-dasharray="502.4" stroke-dashoffset="502.4"
+                            transform="rotate(-90 100 100)" stroke-linecap="round"/>
+                    <text x="100" y="100" text-anchor="middle" dy="0.3em" font-size="40" fill="#333" id="completionText">0%</text>
+                </svg>
+            </div>
+            <div class="completion-breakdown">
+                <h3>内訳</h3>
+                <div class="breakdown-item">
+                    <span>ノード数</span>
+                    <span class="breakdown-score" id="nodeScore">0/30</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>バランス</span>
+                    <span class="breakdown-score" id="balanceSubScore">0/30</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>フロー品質</span>
+                    <span class="breakdown-score" id="flowSubScore">0/25</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>接続密度</span>
+                    <span class="breakdown-score" id="densityScore">0/15</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECIサイクル図 -->
+    <div class="seci-cycle-section">
+        <h2>SECIサイクルの状態</h2>
+        <div class="seci-cycle-visual">
+            <div class="cycle-node node-socialization" data-category="socialization">
+                <div class="node-inner">
+                    <h3>共同化</h3>
+                    <p>Socialization</p>
+                    <div class="node-count" id="socializationCount">0</div>
+                </div>
+            </div>
+            <div class="cycle-node node-externalization" data-category="externalization">
+                <div class="node-inner">
+                    <h3>表出化</h3>
+                    <p>Externalization</p>
+                    <div class="node-count" id="externalizationCount">0</div>
+                </div>
+            </div>
+            <div class="cycle-node node-combination" data-category="combination">
+                <div class="node-inner">
+                    <h3>連結化</h3>
+                    <p>Combination</p>
+                    <div class="node-count" id="combinationCount">0</div>
+                </div>
+            </div>
+            <div class="cycle-node node-internalization" data-category="internalization">
+                <div class="node-inner">
+                    <h3>内面化</h3>
+                    <p>Internalization</p>
+                    <div class="node-count" id="internalizationCount">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}
