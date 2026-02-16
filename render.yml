@@ -1,16 +1,21 @@
+databases:
+  - name: seci-db
+    plan: free
+    postgresMajorVersion: 15
+
 services:
+  - type: keyvalue
+    name: seci-kv
+    plan: free
+
   - type: web
     name: seci-web
     runtime: python
     plan: free
-    region: oregon
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi:app --config gunicorn_conf.py
+    buildCommand: ./build.sh
+    preDeployCommand: python -m app.init_db
+    startCommand: gunicorn -c gunicorn_conf.py "app:create_app()"
     envVars:
-      - key: FLASK_ENV
-        value: production
-      - key: SECRET_KEY
-        generateValue: true
       - key: DATABASE_URL
         fromDatabase:
           name: seci-db
@@ -20,17 +25,9 @@ services:
           name: seci-kv
           type: keyvalue
           property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
       - key: SITE_URL
-        value: https://YOUR-SERVICE.onrender.com
-
-  - type: keyvalue
-    name: seci-kv
-    plan: free
-    ipAllowList:
-      - source: 0.0.0.0/0
-        description: everywhere
-
-databases:
-  - name: seci-db
-    plan: free
-    postgresMajorVersion: "15"
+        value: https://seci-p6co.onrender.com
+      - key: FLASK_DEBUG
+        value: "0"

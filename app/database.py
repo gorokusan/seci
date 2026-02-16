@@ -14,8 +14,8 @@ def init_db(app):
     global db_session, engine
     
     engine = create_engine(
-        app.config['SQLALCHEMY_DATABASE_URI'],
-        **app.config['SQLALCHEMY_ENGINE_OPTIONS']
+    app.config["SQLALCHEMY_DATABASE_URI"],
+    **(app.config.get("SQLALCHEMY_ENGINE_OPTIONS") or {})
     )
     
     db_session = scoped_session(

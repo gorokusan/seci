@@ -13,10 +13,19 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = database_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 3600,
+    }
 
-    redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
+    redis_url = os.getenv("REDIS_URL")
+    if redis_url:
     SESSION_TYPE = "redis"
     SESSION_REDIS = Redis.from_url(redis_url)
+    else:
+    SESSION_TYPE = "filesystem"
+    SESSION_REDIS = None
+
     SESSION_PERMANENT = True
     SESSION_USE_SIGNER = True
     SESSION_KEY_PREFIX = "seci_session:"
@@ -26,4 +35,7 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
 
-    SITE_URL = os.getenv("SITE_URL", "https://seci-p6co.onrender.com")
+    SITE_URL = os.getenv("SITE_URL")
+    if not SITE_URL:
+        host = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+        SITE_URL = f"https://{host}" if host else "https://seci-p6co.onrender.com"
