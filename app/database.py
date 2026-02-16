@@ -8,9 +8,12 @@ from contextlib import contextmanager
 db_session = None
 engine = None
 
-
 def init_db(app):
     """データベース初期化"""
+    db_url = app.config.get("SQLALCHEMY_DATABASE_URI")
+    if not db_url:
+        raise RuntimeError("DATABASE_URL is not set. Please set DATABASE_URL in Render Environment.")
+
     global db_session, engine
     
     engine = create_engine(
