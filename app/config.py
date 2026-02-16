@@ -20,11 +20,11 @@ class Config:
 
     redis_url = os.getenv("REDIS_URL")
     if redis_url:
-    SESSION_TYPE = "redis"
-    SESSION_REDIS = Redis.from_url(redis_url)
+        SESSION_TYPE = "redis"
+        SESSION_REDIS = Redis.from_url(redis_url)
     else:
-    SESSION_TYPE = "filesystem"
-    SESSION_REDIS = None
+        SESSION_TYPE = "filesystem"
+        SESSION_REDIS = None
 
     SESSION_PERMANENT = True
     SESSION_USE_SIGNER = True
