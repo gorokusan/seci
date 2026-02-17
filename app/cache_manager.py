@@ -17,20 +17,15 @@ def init_cache(app):
     redis_url = app.config['REDIS_URL']
     if not redis_url:
         app.logger.warning("REDIS_URL not set. Cache disabled.")
+        redis_client = None
         return
-    #redis_client = redis.from_url(
-    #    redis_url,
-    #    decode_responses=True,
-    #    socket_connect_timeout=5,
-    #    socket_keepalive=True
-    #)
-    
-    # セッションストレージの設定
-    #app.config['SESSION_REDIS'] = redis.from_url(
-    #    redis_url,
-    #    decode_responses=False
-    #)
 
+    redis_client = redis.from_url(
+        redis_url,
+        decode_responses=True,
+        socket_connect_timeout=5,
+        socket_keepalive=True,
+    )
 
 def get_cache():
     """Redisクライアント取得"""
@@ -48,7 +43,11 @@ def cached(prefix, expire=300):
         @wraps(func)
         def wrapper(*args, **kwargs):
             # キャッシュキーの生成
-            key = cache_key(prefix, *args, *sorted(kwargs.items()))
+            if redis_client is None:
+                return func(*args, **kwargs)
+
+            #key = cache_key(prefix, *args, *sorted(kwargs.items()))
+            key = f"{prefix}:{':'.join(str(a) for a in args)}"
             
             # キャッシュから取得
             cached_value = redis_client.get(key)
@@ -72,7 +71,10 @@ def cached(prefix, expire=300):
 
 def invalidate_cache(prefix, *args):
     """キャッシュ無効化"""
-    key = cache_key(prefix, *args)
+    if redis_client is Nine:
+        return
+    #key = cache_key(prefix, *args)
+    key = f"{prefix}:{':'.join(str(a) for a in args)}"
     redis_client.delete(key)
 
 
