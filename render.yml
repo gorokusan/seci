@@ -14,7 +14,7 @@ services:
     plan: free
     buildCommand: ./build.sh
     preDeployCommand: python -m app.init_db
-    startCommand: gunicorn -c gunicorn_conf.py "app:create_app()"
+    startCommand: gunicorn -c gunicorn_conf.py "app:create_app()" --access-logfile - --error-logfile - --log-level debug
     envVars:
       - key: DATABASE_URL
         fromDatabase:
