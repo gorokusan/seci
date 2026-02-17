@@ -14,18 +14,24 @@ def init_cache(app):
     """Redisキャッシュ初期化"""
     #global redis_client
     
-    redis_url = app.config.get['REDIS_URL']
+    redis_url = app.config.get('REDIS_URL')
     if not redis_url:
         app.logger.warning("REDIS_URL not set. Cache disabled.")
         redis_client = None
         return
 
-    redis_client = redis.from_url(
-        redis_url,
-        decode_responses=True,
-        socket_connect_timeout=5,
-        socket_keepalive=True,
-    )
+    try:
+        redis_client = redis.from_url(
+            redis_url,
+            decode_responses=True,
+            socket_connect_timeout=5,
+            socket_keepalive=True,
+        )
+        redis_client.ping()
+        app.logger.info("Redis cache enabled.")
+    except Exception as e:
+        app.logger.warning(f"Redis init failed: {e}. Cache disabled.")
+        redis_client = None
 
 def get_cache():
     """Redisクライアント取得"""
@@ -71,7 +77,8 @@ def cached(prefix, expire=300):
 
 def invalidate_cache(prefix, *args):
     """キャッシュ無効化"""
-    if redis_client is Nine:
+    global redis_client
+    if redis_client is None:
         return
     #key = cache_key(prefix, *args)
     key = f"{prefix}:{':'.join(str(a) for a in args)}"
