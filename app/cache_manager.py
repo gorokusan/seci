@@ -15,18 +15,21 @@ def init_cache(app):
     global redis_client
     
     redis_url = app.config['REDIS_URL']
-    redis_client = redis.from_url(
-        redis_url,
-        decode_responses=True,
-        socket_connect_timeout=5,
-        socket_keepalive=True
-    )
+    if not redis_url:
+        app.logger.warning("REDIS_URL not set. Cache disabled.")
+        return
+    #redis_client = redis.from_url(
+    #    redis_url,
+    #    decode_responses=True,
+    #    socket_connect_timeout=5,
+    #    socket_keepalive=True
+    #)
     
     # セッションストレージの設定
-    app.config['SESSION_REDIS'] = redis.from_url(
-        redis_url,
-        decode_responses=False
-    )
+    #app.config['SESSION_REDIS'] = redis.from_url(
+    #    redis_url,
+    #    decode_responses=False
+    #)
 
 
 def get_cache():
