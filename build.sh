@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # exit on error
-set -o errexit
+set -euo pipefail
 
 # パッケージのインストール
-pip install --upgrade pip
 pip install -r requirements.txt
 
 # データベースマイグレーション実行
+python -m app.init_db
