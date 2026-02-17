@@ -12,9 +12,9 @@ redis_client = None
 
 def init_cache(app):
     """Redisキャッシュ初期化"""
-    global redis_client
+    #global redis_client
     
-    redis_url = app.config['REDIS_URL']
+    redis_url = app.config.get['REDIS_URL']
     if not redis_url:
         app.logger.warning("REDIS_URL not set. Cache disabled.")
         redis_client = None
