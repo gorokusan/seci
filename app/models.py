@@ -259,7 +259,7 @@ class NodeVersion(Base):
             Enum(
                 'socialization',
                 'externalization',
-                'combinataion',
+                'combination',
                 'internalization',
                 name='seci_category',
                 ), 

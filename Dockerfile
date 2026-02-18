@@ -28,4 +28,5 @@ USER appuser
 EXPOSE 5000
 
 # Flaskアプリケーションの起動
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--threads", "2", "--timeout", "120", "app:create_app()"]
+#CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--threads", "2", "--timeout", "120", "app:create_app()"]
+CMD ["sh", "-c", "python -m app.init_db && exec gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 4 --threads 2 --timeout 120 \"app:create_app()\" --access-logfile - --error-logfile - --log-level debug"]
