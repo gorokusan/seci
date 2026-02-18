@@ -6,13 +6,14 @@ from redis import Redis
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
     FLASK_ENV = os.getenv("FLASK_ENV", "production")
+    MAX_NODES_PER_USER = int(os.getenv("MAX_NODES_PER_USER", "200"))
 
     # ---- DB ----
-    database_url = os.getenv("DATABASE_URL")
-    if database_url and database_url.startswith("postgres://"):
-        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    DATABASE_URL = os.getenv("DATABASE_URL")
+    if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-    SQLALCHEMY_DATABASE_URI = database_url
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # これが無いと database.py 側で KeyError になり得る
@@ -20,10 +21,10 @@ class Config:
 
     # ---- Redis (任意) ----
     # Render 無料で Redis を使わないなら、REDIS_URL は未設定でOK（=無効化）
-    redis_url = os.getenv("REDIS_URL", "")
-    if redis_url:
+    REDIS_URL = os.getenv("REDIS_URL", "")
+    if REDIS_URL:
         SESSION_TYPE = "redis"
-        SESSION_REDIS = Redis.from_url(redis_url)
+        SESSION_REDIS = Redis.from_url(REDIS_URL)
     else:
         SESSION_TYPE = "filesystem"
         SESSION_REDIS = None

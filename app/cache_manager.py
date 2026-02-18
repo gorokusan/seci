@@ -96,6 +96,9 @@ def get_session_id():
 
 def get_session_data(key, default=None):
     """セッションデータ取得"""
+    if redis_client is None:
+        return default
+
     session_id = get_session_id()
     cache_key_str = cache_key('session', session_id, key)
     data = redis_client.get(cache_key_str)
@@ -103,6 +106,9 @@ def get_session_data(key, default=None):
 
 
 def set_session_data(key, value, expire=None):
+    if redis_client is None:
+        return
+
     """セッションデータ設定"""
     session_id = get_session_id()
     cache_key_str = cache_key('session', session_id, key)
@@ -121,6 +127,9 @@ def set_session_data(key, value, expire=None):
 
 
 def delete_session_data(key):
+    if redis_client is None:
+        return
+
     """セッションデータ削除"""
     session_id = get_session_id()
     cache_key_str = cache_key('session', session_id, key)
@@ -128,6 +137,9 @@ def delete_session_data(key):
 
 
 def get_user_nodes_cache(session_id):
+    if redis_client is None:
+        return
+
     """ユーザーノードのキャッシュ取得"""
     key = cache_key('nodes', session_id)
     data = redis_client.get(key)
@@ -135,6 +147,9 @@ def get_user_nodes_cache(session_id):
 
 
 def set_user_nodes_cache(session_id, nodes, expire=3600):
+    if redis_client is None:
+        return
+
     """ユーザーノードのキャッシュ設定"""
     key = cache_key('nodes', session_id)
     redis_client.setex(
@@ -145,6 +160,9 @@ def set_user_nodes_cache(session_id, nodes, expire=3600):
 
 
 def invalidate_user_cache(session_id):
+    if redis_client is None:
+        return
+
     """ユーザーキャッシュ無効化"""
     patterns = [
         cache_key('nodes', session_id),

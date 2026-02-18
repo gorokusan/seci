@@ -184,7 +184,7 @@ def get_nodes():
 def create_node():
     """ノード作成"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         
         # バリデーション
         if not data.get('title'):
@@ -300,7 +300,7 @@ def get_node(node_id):
 def update_node(node_id):
     """ノード更新"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         
         db = get_session()
         node = db.query(KnowledgeNode).filter_by(
@@ -420,7 +420,7 @@ def delete_node(node_id):
 def create_connection():
     """接続作成"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         
         # バリデーション
         if not data.get('source_id') or not data.get('target_id'):
@@ -766,7 +766,7 @@ def get_tags():
 def create_tag():
     """タグ作成"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         
         if not data.get('name'):
             return jsonify({'success': False, 'error': 'タグ名は必須です'}), 400
@@ -801,7 +801,7 @@ def create_tag():
 def add_tag_to_node(node_id):
     """ノードにタグを追加"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         tag_id = data.get('tag_id')
         
         if not tag_id:
@@ -956,7 +956,7 @@ def create_node_version(db, node, change_description=''):
 def add_reaction(node_id):
     """リアクション追加"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {} 
         reaction_type = data.get('type')
         
         if reaction_type not in ['like', 'star', 'bookmark']:
@@ -1086,7 +1086,7 @@ def get_node_comments(node_id):
 def add_comment(node_id):
     """コメント追加"""
     try:
-        data = request.get_json() or {}
+        data = request.get_json(silent=True) or {}
 
         if not data.get('comment_text'):
             return jsonify({'success': False, 'error': 'コメント本文は必須です'}), 400
